@@ -1,20 +1,22 @@
+/* global process require */
+
+import node from 'rollup-plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
+
 var pkg = require('./package.json');
 
-var dependencies = {
-  'concurrify': 'concurrify',
-  'denque': 'Denque',
-  'inspect-f': 'inspectf',
-  'sanctuary-type-classes': 'sanctuaryTypeClasses',
-  'sanctuary-type-identifiers': 'sanctuaryTypeIdentifiers'
-};
+var banner = `/**
+ * Fluture bundled; version ${process.env.VERSION || `${pkg.version} (dirty)`}
+ */
+`;
 
 export default {
-  input: 'index.cjs.js',
-  external: Object.keys(dependencies),
+  input: 'index.cjs.mjs',
+  plugins: [node(), commonjs({include: 'node_modules/**'})],
   output: {
-    format: 'umd',
-    file: pkg.main,
+    banner: banner,
+    format: 'iife',
     name: 'Fluture',
-    globals: dependencies
+    file: 'dist/bundle.js'
   }
 };

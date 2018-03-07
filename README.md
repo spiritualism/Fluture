@@ -31,38 +31,12 @@ For more information:
 
 ## Usage
 
-> `npm install --save fluture`
+Fluture uses EcmaScript version 5 and is exported as an EcmaScript module.
+TypeScript definitions are included.
 
-Fluture is written for EcmaScript version 5.
-
-For older environments you may need to polyfill one or more of the following
-functions: [`Object.create`][JS:Object.create],
-[`Object.assign`][JS:Object.assign] and [`Array.isArray`][JS:Array.isArray].
-Fluture will tell you when this is needed.
-
-### CommonJS Module
-
-<!-- eslint-disable no-var -->
-<!-- eslint-disable padding-line-between-statements -->
-```js
-var fs = require('fs');
-var Future = require('fluture');
-
-var getPackageName = function(file){
-  return Future.node(function(done){ fs.readFile(file, 'utf8', done) })
-  .chain(Future.encase(JSON.parse))
-  .map(function(x){ return x.name });
-};
-
-getPackageName('package.json')
-.fork(console.error, console.log);
-//> "fluture"
+```console
+$ npm install --save fluture
 ```
-
-### EcmaScript Module
-
-The `package.json` sets a `module`-field for build-tools like [Rollup][]. The
-module version also has TypeScript definitions.
 
 ```js
 import {readFile} from 'fs';
@@ -78,12 +52,36 @@ getPackageName('package.json')
 //> "fluture"
 ```
 
-### Global Bundle (CDN)
+### Targeting legacy Node versions
 
-Fluture is hosted in full with all of its dependencies at
-https://rawgit.com/fluture-js/Fluture/master/dist/bundle.js.
+You can run Node with the `--experimental-modules` flag where it's supported,
+or with the `--require @std/esm` flag where it's not. The latter relies on
+[`@std/esm`](https://github.com/standard-things/esm) being installed.
 
-This script will add `Fluture` to the global scope.
+### Targeting modern browsers
+
+```html
+<script type="module">
+  import {of, value} from 'node_modules/fluture/index.mjs';
+  value(console.log, of('Hello world!'));
+</script>
+```
+
+### Targeting legacy browsers
+
+1. **Using a compiler:** the `package.json` sets a `module`-field for
+   compilers like [Rollup][] or [Webpack][].
+
+2. **Directly as a script:** Fluture is hosted in full with all of its
+   dependencies [on RawGit](https://rawgit.com/fluture-js/Fluture/master/dist/bundle.js)
+   You can download the script from here, or include it directly, to get
+   `Fluture` available in the global scope:
+   ```html
+   <script type="text/javascript" src="https://rawgit.com/fluture-js/Fluture/master/dist/bundle.js"></script>
+   <script type="text/javascript">
+     Fluture.value(console.log, Fluture.of('Hello world!'))
+   </script>
+   ```
 
 ## Interoperability
 
@@ -1582,6 +1580,7 @@ it is **not** the correct way to [consume a Future](#consuming-futures).
 [concurrify]:           https://github.com/fluture-js/concurrify
 
 [Rollup]:               https://rollupjs.org/
+[Webpack]:              https://webpack.js.org/
 
 [Guide:HM]:             https://drboolean.gitbooks.io/mostly-adequate-guide/content/ch7.html
 [Guide:constraints]:    https://drboolean.gitbooks.io/mostly-adequate-guide/content/ch7.html#constraints
